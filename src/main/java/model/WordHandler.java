@@ -68,7 +68,7 @@ public class WordHandler {
         FileReader fileReader = new FileReader(new File(file + ".txt"));
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
-        while ((line = bufferedReader.readLine()) != null) {;
+        while ((line = bufferedReader.readLine()) != null) {
             tempArr[i] = line;
             i++;
         }

@@ -1,4 +1,4 @@
-package view;
+package net;
 
 import com.google.gson.Gson;
 

@@ -1,4 +1,4 @@
-package view;
+package net;
 
 public class Message {
     private String name;

@@ -1,4 +1,4 @@
-package view;
+package net;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
