@@ -1,22 +1,38 @@
 package view;
 
-import model.ServerException;
-
-import javax.websocket.Endpoint;
-import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
-public class EchoEndpoint extends Endpoint {
-    @Override
-    public void onOpen(final Session session, EndpointConfig config) {
-        session.addMessageHandler((MessageHandler.Whole<String>) msg -> {
-            try {
-                session.getBasicRemote().sendText(msg);
-            } catch (IOException e) {
-                throw new ServerException("Couldn't send message...", e);
+@ServerEndpoint(value = "/echo", encoders = { MessageEncoder.class })
+public class EchoEndpoint {
+    @OnOpen
+    public void open(Session session, EndpointConfig conf) {
+
+    }
+
+    @OnMessage
+    public void onMessage(Session session, String msg) {
+        try {
+            for (Session sess : session.getOpenSessions()) {
+                if (sess.isOpen())
+                    sess.getBasicRemote().sendObject(msg);
             }
-        });
+        } catch (IOException e) {
+            System.err.println("Couldn't send message...");
+        } catch (EncodeException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @OnError
+    public void error(Session session, Throwable error) {
+
+    }
+
+    @OnClose
+    public void close(Session session, CloseReason reason) {
+
     }
 }
