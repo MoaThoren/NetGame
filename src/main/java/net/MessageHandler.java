@@ -1,23 +1,21 @@
 package net;
 
+import com.google.gson.Gson;
+
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
-@ServerEndpoint(value = "/message", encoders = { MessageEncoder.class })
+@ServerEndpoint(value = "/message"/*, encoders = { MessageEncoder.class }, decoders = { MessageDecoder.class } */)
 public class MessageHandler {
-    private Session opponent1Session = null;
-    private Session opponent2Session = null;
+    private Gson gson = new Gson();
 
     @OnOpen
     public void open(Session session) {
-        if(opponent1Session == null)
-            opponent1Session = session;
-        else
-            opponent2Session = session;
-
         try {
-            session.getBasicRemote().sendText("Pelle");
+            session.getUserProperties().put("sessionUser", "temp");
+            session.getBasicRemote().sendText("Starting my connection at with username temp and id: " + session.getId());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -26,25 +24,44 @@ public class MessageHandler {
     @OnMessage
     public void onMessage(Session session, String msg) {
         try {
-            if(msg.contains("all:")) {
-                String newMsg = msg.split("all:")[1];
-                for (Session sess : session.getOpenSessions()) {
-                    if (sess.isOpen())
-                        sess.getBasicRemote().sendObject(newMsg);
-                }
-            } else {
-                if(session.getId().equals(opponent1Session.getId()))
-                    opponent2Session.getBasicRemote().sendText(msg);
-                else
-                    opponent1Session.getBasicRemote().sendText(msg);
+            String[] splitMessage = msg.split(":::");
+            System.out.println(splitMessage[1]);
+            String option = splitMessage[0].toLowerCase();
+            Message extractedMsg = gson.fromJson(splitMessage[1], Message.class);
+            switch(option) {
+                case "send":
+                    String sender = (String) session.getUserProperties().get("sessionUser");
+                    if(sender.equals("temp"))
+                        session.getUserProperties().replace("sessionUser", extractedMsg.getSender());
+                    else {
+                        for (Session sess : session.getOpenSessions()) {
+                            String receiver = (String) sess.getUserProperties().get("sessionUser");
+                            if (receiver.equals(extractedMsg.getReceiver()) && sess.isOpen()) {
+                                sess.getBasicRemote().sendText(splitMessage[1]);
+                            }
+                        }
+                    }
+                    break;
+
+                case "all":
+                    for (Session sess : session.getOpenSessions()) {
+                        if (sess.isOpen()) {
+                            sess.getBasicRemote().sendText(splitMessage[1]);
+                        }
+                    }
+                    break;
+
+                default:
+                    System.err.println("Couldn't find option, went to default.");
+                    break;
             }
 
         } catch (IOException e) {
             System.err.println("Couldn't send message...");
             e.printStackTrace();
-        } catch (EncodeException e) {
+        } /*catch (EncodeException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
