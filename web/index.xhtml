@@ -5,22 +5,35 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-<script type="text/javascript">
-    if (window.WebSocket) {
-        //var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
-        var ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
-        var i = 0;
-        ws.onmessage = function(event) {
-            var text = event.data;
-            if(1 >= i) {
-                ws.send("all: Before single text");
-            }
-            i++;
-            console.log(text);
-        };
-    }
-</script>
+    <script type="text/javascript">
+        if (window.WebSocket) {
+            //var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
+            var ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
+            var i = 0;
+            ws.onmessage = function(event) {
+                var text = event.data;
+                if(1 >= i) {
+                    ws.send("all: Before single text");
+                }
+                i++;
+                console.log(text);
+            };
+        }
+    </script>
     <f:view>
        <h:outputLabel value="Hello, world"/>
     </f:view>
+
+    <h:inputText  styleClass="guessarea" label="Got a guess?"/>
+    <ol class="chat">
+        <ui:repeat value="#{FUNCTION_WHERE_TO_GET_MESSAGES}" var="chatmessage">
+            <li class="#{chatmessage.selfOrOther}">
+                <div class="msg">
+                    <h:outputText value="#{chatmessage.txt}"/>
+                </div>
+            </li>
+        </ui:repeat>
+    </ol>
+
+    <h:inputText styleClass="chatarea" label="Chat here"/>
 </html>
