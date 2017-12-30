@@ -4,36 +4,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
     <script type="text/javascript">
-        if (window.WebSocket) {
-            //var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
-            var ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
-            var i = 0;
-            ws.onmessage = function(event) {
-                var text = event.data;
-                if(1 >= i) {
-                    ws.send("all: Before single text");
-                }
-                i++;
-                console.log(text);
-            };
-        }
+
     </script>
-    <f:view>
-       <h:outputLabel value="Hello, world"/>
-    </f:view>
+    <h:head>
+        <h:outputScript name="js/script.js" />
+        <h:outputStylesheet name="css/style.css"  />
+    </h:head>
+    <h:body>
+        <!--<f:view>
+            <h:outputLabel value="Hello, world"/>
+        </f:view>
+        -->
+        <h:inputText  styleClass="guessarea" a:placeholder="Got a guess?"/>
+        <h:form>
+            <ol id="chatList" class="chat">
+                <ui:repeat value="#{messageHistory.chatmessages}" var="chatmessage">
+                    <li class="#{chatmessage.id}">
+                        <div class="msg">
+                            <h:outputText value="#{chatmessage.txt}"/>
+                        </div>
+                    </li>
+                </ui:repeat>
+            </ol>
 
-    <h:inputText  styleClass="guessarea" label="Got a guess?"/>
-    <ol class="chat">
-        <ui:repeat value="#{FUNCTION_WHERE_TO_GET_MESSAGES}" var="chatmessage">
-            <li class="#{chatmessage.selfOrOther}">
-                <div class="msg">
-                    <h:outputText value="#{chatmessage.txt}"/>
-                </div>
-            </li>
-        </ui:repeat>
-    </ol>
-
-    <h:inputText styleClass="chatarea" label="Chat here"/>
+            <h:inputText id="inputMessage" styleClass="chatarea" a:placeholder="Chat here" value="#{messageHistory.message}"/>
+            <h:commandButton value="Send" action="#{messageHistory.addChatmessage}"/>
+        </h:form>
+    </h:body>
 </html>

@@ -5,17 +5,20 @@ import com.google.gson.Gson;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/message"/*, encoders = { MessageEncoder.class }, decoders = { MessageDecoder.class } */)
 public class MessageHandler {
     private Gson gson = new Gson();
+    Logger logger = Logger.getLogger(getClass().getName());
 
     @OnOpen
     public void open(Session session) {
         try {
+            System.out.println("Opened");
+            logger.severe("Opened");
             session.getUserProperties().put("sessionUser", "temp");
-            session.getBasicRemote().sendText("Starting my connection at with username temp and id: " + session.getId());
-
+            session.getBasicRemote().sendText("all:::Starting my connection at with username temp and id: " + session.getId());
         } catch (IOException e) {
             e.printStackTrace();
         }
