@@ -7,10 +7,15 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <script type="text/javascript">
     if (window.WebSocket) {
-        var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
+        //var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
+        var ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
+        var i = 0;
         ws.onmessage = function(event) {
             var text = event.data;
-            ws.send("all: Hello");
+            if(1 >= i) {
+                ws.send("all: Before single text");
+            }
+            i++;
             console.log(text);
         };
     }
