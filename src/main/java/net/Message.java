@@ -5,8 +5,8 @@ public class Message {
     private String receiver;
     private String message;
 
-    Message(String name, String receiver, String message) {
-        this.sender = name;
+    Message(String receiver, String sender, String message) {
+        this.sender = sender;
         this.receiver = receiver;
         this.message = message;
     }
@@ -23,8 +23,12 @@ public class Message {
         return message;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
-        return String.format("(MESSAGE: sender=%s, receiver=%s, message=%s*)", sender, receiver, message);
+        return String.format("(MESSAGE: receiver=%s, sender=%s, message=%s*)", receiver, sender, message);
     }
 }

@@ -15,24 +15,18 @@
         <h:outputStylesheet name="css/style.css"  />
     </h:head>
     <h:body>
-        <!--<f:view>
-            <h:outputLabel value="Hello, world"/>
-        </f:view>
-        -->
-        <h:inputText  styleClass="guessarea" a:placeholder="Got a guess?"/>
         <h:form>
+            <h:inputText  styleClass="guessarea" a:placeholder="Got a guess?"/>
+        </h:form>
+        <h:form id="sendMsgForm" onsubmit="sendMessage()">
             <ol id="chatList" class="chat">
-                <ui:repeat value="#{messageHistory.chatmessages}" var="chatmessage">
-                    <li class="#{chatmessage.id}">
-                        <div class="msg">
-                            <h:outputText value="#{chatmessage.txt}"/>
-                        </div>
-                    </li>
-                </ui:repeat>
+
             </ol>
 
-            <h:inputText id="inputMessage" styleClass="chatarea" a:placeholder="Chat here" value="#{messageHistory.message}"/>
-            <h:commandButton value="Send" action="#{messageHistory.addChatmessage}"/>
+            <h:inputText id="inputMessage" styleClass="chatarea" a:placeholder="Chat here"/>
+            <h:commandButton type="submit" value="Submit" id="sendButton" styleClass="sendButton">
+                <!--<f:ajax execute="@form"/>-->
+            </h:commandButton>
         </h:form>
     </h:body>
 </html>

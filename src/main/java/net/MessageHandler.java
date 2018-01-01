@@ -1,80 +1,53 @@
 package net;
 
-import com.google.gson.Gson;
-
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-@ServerEndpoint(value = "/message"/*, encoders = { MessageEncoder.class }, decoders = { MessageDecoder.class } */)
+@ServerEndpoint(value = "/message")
 public class MessageHandler {
-    private Gson gson = new Gson();
-    Logger logger = Logger.getLogger(getClass().getName());
+    String prevMsg = "";
+
+    private static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
 
     @OnOpen
-    public void open(Session session) {
+    public void onOpen(Session peer) {
+        peers.add(peer);
         try {
-            System.out.println("Opened");
-            logger.severe("Opened");
-            session.getUserProperties().put("sessionUser", "temp");
-            session.getBasicRemote().sendText("all:::Starting my connection at with username temp and id: " + session.getId());
+            peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the guessing game!"));
+            peer.getBasicRemote().sendText(MessageEncoder.encode(prevMsg));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @OnMessage
-    public void onMessage(Session session, String msg) {
+    public void onMessage(String msg) {
         try {
-            String[] splitMessage = msg.split(":::");
-            System.out.println(splitMessage[1]);
-            String option = splitMessage[0].toLowerCase();
-            Message extractedMsg = gson.fromJson(splitMessage[1], Message.class);
-            switch(option) {
-                case "send":
-                    String sender = (String) session.getUserProperties().get("sessionUser");
-                    if(sender.equals("temp"))
-                        session.getUserProperties().replace("sessionUser", extractedMsg.getSender());
-                    else {
-                        for (Session sess : session.getOpenSessions()) {
-                            String receiver = (String) sess.getUserProperties().get("sessionUser");
-                            if (receiver.equals(extractedMsg.getReceiver()) && sess.isOpen()) {
-                                sess.getBasicRemote().sendText(splitMessage[1]);
-                            }
-                        }
-                    }
-                    break;
-
-                case "all":
-                    for (Session sess : session.getOpenSessions()) {
-                        if (sess.isOpen()) {
-                            sess.getBasicRemote().sendText(splitMessage[1]);
-                        }
-                    }
-                    break;
-
-                default:
-                    System.err.println("Couldn't find option, went to default.");
-                    break;
+            Message extractedMsg = MessageEncoder.decode(msg);
+            prevMsg = extractedMsg.getMessage();
+            for (Session session : peers) {
+                if (session.isOpen()) {
+                    session.getBasicRemote().sendText(MessageEncoder.encode(extractedMsg));
+                }
             }
 
         } catch (IOException e) {
-            System.err.println("Couldn't send message...");
             e.printStackTrace();
-        } /*catch (EncodeException e) {
-            e.printStackTrace();
-        }*/
-
-    }
-
-    @OnError
-    public void error(Session session, Throwable error) {
+        }
 
     }
 
     @OnClose
-    public void close(Session session, CloseReason reason) {
+    public void close(Session peer, CloseReason reason) {
+        peers.remove(peer);
+    }
 
+    @OnError
+    public void error(Session peer, Throwable error) {
+        error.printStackTrace();
     }
 }
