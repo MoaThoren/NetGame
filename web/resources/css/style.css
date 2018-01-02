@@ -1,29 +1,27 @@
-
 /* BASED ON: https://codepen.io/Varo/pen/gbZzgr */
 
 @import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700);
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
 
-html, body {
+html,
+body {
     background: #e5e5e5;
-    font-family: 'Lato', sans-serif;
-    margin: 0px auto;
+    font-family: "Lato", sans-serif;
+    margin: 0 auto;
 }
-::selection{
-  background: rgba(82,179,217,0.3);
-  color: inherit;
+::selection {
+    background: rgba(82, 179, 217, 0.3);
+    color: inherit;
 }
-a{
-  color: rgba(82,179,217,0.9);
+a {
+    color: rgba(82, 179, 217, 0.9);
 }
 
 .bigbox {
     list-style: none;
     background: none;
-    margin: 30%;
     padding: 0 0 50px 0;
-    margin-top: 60px;
-    margin-bottom: 10px;
+    margin: 60px 30% 10px;
 }
 
 /* MESSAGE VIEW */
@@ -31,10 +29,8 @@ a{
 .chat {
     list-style: none;
     background: none;
-    margin: 0;
     padding: 0 0 50px 0;
-    margin-top: 60px;
-    margin-bottom: 10px;
+    margin: 60px 0 10px;
 }
 .chat li {
     padding: 0.5rem;
@@ -42,10 +38,20 @@ a{
     display: flex;
 }
 
+.server .msg {
+    order: 1;
+    width: 100%;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: -1px 2px 0 #d4d4d4;
+    background: lightgrey;
+    margin: -5px;
+}
+
 .other .msg {
     order: 1;
-    border-top-left-radius: 0px;
-    box-shadow: -1px 2px 0px #D4D4D4;
+    border-top-left-radius: 0;
+    box-shadow: -1px 2px 0 #d4d4d4;
 }
 
 .self {
@@ -54,10 +60,9 @@ a{
 }
 .self .msg {
     order: 1;
-    border-bottom-right-radius: 0px;
-    box-shadow: 1px 2px 0px #D4D4D4;
-    background: #7FFFD4;
-
+    border-bottom-right-radius: 0;
+    box-shadow: 1px 2px 0 #d4d4d4;
+    background: #7fffd4;
 }
 
 .msg {
@@ -65,7 +70,7 @@ a{
     min-width: 50px;
     padding: 10px;
     border-radius: 2px;
-    box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
 }
 .msg p {
     font-size: 0.8rem;
@@ -77,7 +82,7 @@ a{
 
 input.chatarea {
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     left: 34%;
     width: 30%;
     max-width: inherit;
@@ -90,13 +95,34 @@ input.chatarea {
     padding-right: 1%;
     color: #666;
     font-weight: 400;
-    box-shadow: 1px 2px 0px #D4D4D4;
+    box-shadow: 1px 2px 0 #d4d4d4;
+}
 
+.sendButton {
+    position: fixed;
+    bottom: 5px;
+    right: 34.5%;
+    width: 40px;
+    max-width: inherit;
+    height: 40px;
+    z-index: 99;
+    background: #42f474
+    url("https://github.com/google/material-design-icons/blob/master/content/1x_web/ic_send_white_36dp.png?raw=true")
+    no-repeat 60% 50%;
+    background-size: 60%;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    cursor: pointer;
 }
 
 input.guessarea {
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 40%;
     width: 18%;
     height: 50px;
@@ -108,12 +134,12 @@ input.guessarea {
     padding-right: 1%;
     color: #666;
     font-weight: 400;
-    box-shadow: 1px 2px 0px #D4D4D4;
+    box-shadow: 1px 2px 0 #d4d4d4;
 }
 
 .wordarea {
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 40%;
     width: 18%;
     height: 50px;
@@ -125,32 +151,33 @@ input.guessarea {
     padding-right: 1%;
     color: #666;
     font-weight: 400;
-    box-shadow: 1px 2px 0px #D4D4D4;
+    box-shadow: 1px 2px 0 #d4d4d4;
     text-align: center;
 }
 
 /* RESPONSIVE */
 
 @media screen and (max-width: 1200px) {
-    .bigbox{
-    margin: 0%;
-}
-}
-@media screen and (max-width: 1200px) {
-    input.chatarea{
-    width: 100%;
-    left: 0%;
-}
-}
-@media screen and (max-width: 1200px) {
-    input.guessarea{
-    width: 100%;
-    left: 0%;
-}
-}
-@media screen and (max-width: 1200px) {
-    .wordarea{
-    width: 100%;
-    left: 0%;
-}
+    .bigbox {
+        margin: 0;
+    }
+
+    input.chatarea {
+        width: 100%;
+        left: 0;
+    }
+
+    .sendButton {
+        right: 1%;
+    }
+
+    input.guessarea {
+        width: 100%;
+        left: 0;
+    }
+
+    .wordarea {
+        width: 100%;
+        left: 0;
+    }
 }
