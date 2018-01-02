@@ -11,7 +11,7 @@ public class JavaTester {
         System.out.println(game.getWord());
 
         Scanner sc = new Scanner(System.in);
-        System.out.println(game.guessWord(sc.next()));
+        System.out.println(controller.guessWord(sc.next()));
         System.out.println("Score: " + game.getScore());
     }
 }

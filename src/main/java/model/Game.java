@@ -17,7 +17,7 @@ public class Game implements GameDTO{
             currentWord = wh.getWord();
             return true;
         }
-        else return false;
+        return false;
     }
 
     public int getScore(){

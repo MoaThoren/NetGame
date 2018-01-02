@@ -121,6 +121,7 @@ function setupWebsocket() {
 function sendMessage(message, receiver) {
     let value = document.getElementById("sendMsgForm:inputMessage").value;
     document.getElementById("sendMsgForm:inputMessage").value = "";
+    console.log(message);
     if(message === undefined)
         sendMessage(value);
     else if(receiver === undefined)

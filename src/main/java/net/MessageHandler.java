@@ -41,8 +41,10 @@ public class MessageHandler {
             if(extractedMsg.getReceiver().equals("server")) {
                 if(extractedMsg.getMessage().equals("name"))
                     peer.getUserProperties().put("username", extractedMsg.getSender());
-                else
+                else {
+                    peer.getBasicRemote().sendText(MessageEncoder.encode("MeepMoop you guessed something " + extractedMsg.getMessage()));
                     guessWord(extractedMsg.getMessage(), peer);
+                }
             } else {
                 for (Session session : peers) {
                     if (session.isOpen()) {
@@ -73,7 +75,7 @@ public class MessageHandler {
             if (session.isOpen()) {
                 try {
                     session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " guessed: " + guess
-                                                                                                                + "It was the " + right + " answer."));
+                                                                                                                + ". It was the " + right + " answer."));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
