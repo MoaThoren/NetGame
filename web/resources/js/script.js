@@ -110,5 +110,5 @@ function sendMessage(message, receiver) {
 }
 
 if (window.WebSocket) {
-    setupWebsocket();
+    document.onload = setupWebsocket();
 }

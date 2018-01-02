@@ -15,7 +15,7 @@ public class MessageHandler {
     public void onOpen(Session peer) {
         peers.add(peer);
         try {
-            peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the guessing game!"));
+            peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!"));
         } catch (IOException e) {
             e.printStackTrace();
         }
