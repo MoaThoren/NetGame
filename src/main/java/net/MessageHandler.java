@@ -1,5 +1,7 @@
 package net;
 
+import controller.Controller;
+
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -10,12 +12,14 @@ import java.util.Set;
 @ServerEndpoint(value = "/message")
 public class MessageHandler {
     private static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
+    private Controller controller;
 
     @OnOpen
     public void onOpen(Session peer) {
-        if(peers.isEmpty())
+        if(peers.isEmpty()) {
+            controller  = new Controller();
             peer.getUserProperties().put("isFirst", true);
-        else
+        } else
             peer.getUserProperties().put("isFirst", false);
         peers.add(peer);
         try {
@@ -23,7 +27,7 @@ public class MessageHandler {
                 peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are a minion"));
             else {
                 peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are the game master"));
-                peer.getBasicRemote().sendText(MessageEncoder.encode("The word you should explain is: " + getWord()));
+                peer.getBasicRemote().sendText(MessageEncoder.encode("The word you should explain is: " + controller.getWord()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,7 +42,7 @@ public class MessageHandler {
                 if(extractedMsg.getMessage().equals("name"))
                     peer.getUserProperties().put("username", extractedMsg.getSender());
                 else
-                    wordGuess(extractedMsg.getMessage(), peer);
+                    guessWord(extractedMsg.getMessage(), peer);
             } else {
                 for (Session session : peers) {
                     if (session.isOpen()) {
@@ -61,19 +65,19 @@ public class MessageHandler {
         error.printStackTrace();
     }
 
-    private void wordGuess(String guess, Session peer) {
-        // Do stuff with game
+    private void guessWord(String guess, Session peer) {
+        String right = "wrong";
+        if(controller.guessWord(guess))
+            right = "right";
         for (Session session : peers) {
             if (session.isOpen()) {
                 try {
-                    session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " guessed: " + guess));
+                    session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " guessed: " + guess
+                                                                                                                + "It was the " + right + " answer."));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
-    private String getWord() {
-        return "WORD";
     }
 }
