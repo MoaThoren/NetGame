@@ -120,41 +120,6 @@ input.chatarea {
     cursor: pointer;
 }
 
-input.guessarea {
-    position: fixed;
-    top: 0;
-    left: 40%;
-    width: 18%;
-    height: 50px;
-    z-index: 99;
-    background: #fafafa;
-    border: none;
-    outline: none;
-    padding-left: 1%;
-    padding-right: 1%;
-    color: #666;
-    font-weight: 400;
-    box-shadow: 1px 2px 0 #d4d4d4;
-}
-
-.wordarea {
-    position: fixed;
-    top: 0;
-    left: 40%;
-    width: 18%;
-    height: 50px;
-    z-index: 99;
-    background: #fafafa;
-    border: none;
-    outline: none;
-    padding-left: 1%;
-    padding-right: 1%;
-    color: #666;
-    font-weight: 400;
-    box-shadow: 1px 2px 0 #d4d4d4;
-    text-align: center;
-}
-
 /* RESPONSIVE */
 
 @media screen and (max-width: 1200px) {
@@ -169,11 +134,6 @@ input.guessarea {
 
     .sendButton {
         right: 1%;
-    }
-
-    input.guessarea {
-        width: 100%;
-        left: 0;
     }
 
     .wordarea {

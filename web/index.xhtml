@@ -6,27 +6,18 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
-
-    <script type="text/javascript">
-
-    </script>
     <h:head>
-        <h:outputScript name="js/script.js" />
-        <h:outputStylesheet name="css/style.css"  />
+        <h:outputStylesheet name="css/style.css" />
     </h:head>
     <h:body>
-        <h:form>
-            <h:inputText  styleClass="guessarea" a:placeholder="Got a guess?"/>
-        </h:form>
-        <h:form id="sendMsgForm" onsubmit="sendMessage()">
-            <ol id="chatList" class="chat">
-
-            </ol>
-
+        <h:form id="sendMsgForm">
+            <ol id="chatList" class="chat"/>
             <h:inputText id="inputMessage" styleClass="chatarea" a:placeholder="Chat here"/>
-            <h:commandButton type="submit" value="" id="sendButton" styleClass="sendButton">
-                <!--<f:ajax execute="@form"/>-->
+            <h:commandButton type="submit" value="" id="sendButton" update="sendMsgForm" styleClass="sendButton">
+                <f:ajax execute="@form" render="stub" onevent="sendMessage()"/>
             </h:commandButton>
         </h:form>
+        <div id="stub" style="visibility: hidden;"/>
+        <h:outputScript name="js/script.js" />
     </h:body>
 </html>
