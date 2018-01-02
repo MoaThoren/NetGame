@@ -23,10 +23,6 @@ public class Message {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
         return String.format("(MESSAGE: receiver=%s, sender=%s, message=%s*)", receiver, sender, message);

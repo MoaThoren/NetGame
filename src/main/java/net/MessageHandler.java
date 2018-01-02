@@ -9,8 +9,6 @@ import java.util.Set;
 
 @ServerEndpoint(value = "/message")
 public class MessageHandler {
-    String prevMsg = "";
-
     private static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
 
     @OnOpen
@@ -18,7 +16,6 @@ public class MessageHandler {
         peers.add(peer);
         try {
             peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the guessing game!"));
-            peer.getBasicRemote().sendText(MessageEncoder.encode(prevMsg));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -28,17 +25,14 @@ public class MessageHandler {
     public void onMessage(String msg) {
         try {
             Message extractedMsg = MessageEncoder.decode(msg);
-            prevMsg = extractedMsg.getMessage();
             for (Session session : peers) {
                 if (session.isOpen()) {
                     session.getBasicRemote().sendText(MessageEncoder.encode(extractedMsg));
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @OnClose

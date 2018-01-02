@@ -4,7 +4,7 @@ public final class MessageEncoder {
     private static String ENCODING_DELIMITER = ";;;";
 
     public static String encode(String msg) {
-        return "All" + ENCODING_DELIMITER + "Server" + ENCODING_DELIMITER + msg;
+        return "All" + ENCODING_DELIMITER + "server" + ENCODING_DELIMITER + msg;
     }
 
     public static String encode(Message msg) {

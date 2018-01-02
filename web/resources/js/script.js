@@ -47,25 +47,49 @@ function checkCookie(name) {
         return username;
     } else {
         username = prompt("Please enter your name:", "");
-        if (username !== "" && username != null) {
+        if (username !== "" && username !== null) {
             setCookie("username", username, 1);
             return username;
         }
     }
 }
 
+function returnChatBox(type, message) {
+    if(type !== "server")
+        return document.getElementById("chatList").insertAdjacentHTML( 'beforeend',
+            '<li class="' + type + '">' +
+                '<div class="msg">' +
+                    '<p>' +
+                        '<p>' + message.sender + '</p>' +
+                        message.text +
+                    '</p>' +
+                '</div>' +
+            '</li>');
+    else
+        return document.getElementById("chatList").insertAdjacentHTML( 'beforeend',
+            '<li class="' + type + '">' +
+                '<div class="msg">' +
+                    '<p>' +
+                        message.text +
+                    '</p>' +
+                '</div>' +
+            '</li>');
+}
+
 function setupWebsocket() {
-    //var ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
-    this.ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
+    this.ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
+    //this.ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
     this.ws.onopen = function () {
         console.log("Connection open");
     };
     this.ws.onmessage = function(event) {
         let message = decode(event.data);
         if(message.sender === username)
-            document.getElementById("chatList").insertAdjacentHTML( 'beforeend', '<li class="self"><div class="msg"><p>' + '<p>' + message.sender + '</p>' + message.text + '</p></div></li>');
+            returnChatBox("self", message);
+        else if(message.sender === "server")
+            returnChatBox("server", message);
         else
-            document.getElementById("chatList").insertAdjacentHTML( 'beforeend', '<li class="other"><div class="msg"><p>' + '<p>' + message.sender + '</p>' + message.text + '</p></div></li>');
+            returnChatBox("other", message);
     };
     this.ws.onclose = function() {
         setTimeout(setupWebsocket(), 1000);
