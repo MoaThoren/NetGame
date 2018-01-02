@@ -13,21 +13,37 @@ public class MessageHandler {
 
     @OnOpen
     public void onOpen(Session peer) {
+        if(peers.isEmpty())
+            peer.getUserProperties().put("isFirst", true);
+        else
+            peer.getUserProperties().put("isFirst", false);
         peers.add(peer);
         try {
-            peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!"));
+            if(!(boolean) peer.getUserProperties().get("isFirst"))
+                peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are a minion"));
+            else {
+                peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are the game master"));
+                peer.getBasicRemote().sendText(MessageEncoder.encode("The word you should explain is: " + getWord()));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @OnMessage
-    public void onMessage(String msg) {
+    public void onMessage(String msg, Session peer) {
         try {
             Message extractedMsg = MessageEncoder.decode(msg);
-            for (Session session : peers) {
-                if (session.isOpen()) {
-                    session.getBasicRemote().sendText(MessageEncoder.encode(extractedMsg));
+            if(extractedMsg.getReceiver().equals("server")) {
+                if(extractedMsg.getMessage().equals("name"))
+                    peer.getUserProperties().put("username", extractedMsg.getSender());
+                else
+                    wordGuess(extractedMsg.getMessage(), peer);
+            } else {
+                for (Session session : peers) {
+                    if (session.isOpen()) {
+                        session.getBasicRemote().sendText(MessageEncoder.encode(extractedMsg));
+                    }
                 }
             }
         } catch (IOException e) {
@@ -43,5 +59,21 @@ public class MessageHandler {
     @OnError
     public void error(Session peer, Throwable error) {
         error.printStackTrace();
+    }
+
+    private void wordGuess(String guess, Session peer) {
+        // Do stuff with game
+        for (Session session : peers) {
+            if (session.isOpen()) {
+                try {
+                    session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " guessed: " + guess));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    private String getWord() {
+        return "WORD";
     }
 }

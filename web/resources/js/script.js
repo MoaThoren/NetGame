@@ -76,20 +76,38 @@ function returnChatBox(type, message) {
             '</li>');
 }
 
+function noGuessBox(word) {
+    let div = document.createElement('div');
+    div.innerHTML = '<div class="wordarea"><p>' + word + '</p></div>';
+    let guessArea = document.getElementById("sendGuessForm");
+    guessArea.replaceWith(div.firstChild);
+}
+
 function setupWebsocket() {
     this.ws = new WebSocket("ws://192.168.10.243:8080/NetGame/message");
     //this.ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
     this.ws.onopen = function () {
+        sendMessage("name", "server");
         console.log("Connection open");
     };
     this.ws.onmessage = function(event) {
         let message = decode(event.data);
-        if(message.sender === username)
-            returnChatBox("self", message);
-        else if(message.sender === "server")
-            returnChatBox("server", message);
-        else
-            returnChatBox("other", message);
+        if (message.text.indexOf("The word you should explain is:") !== -1)
+            noGuessBox(message.text.split(': ')[1]);
+        else {
+            if (message.sender === username) {
+                returnChatBox("self", message);
+                scrollToBot();
+            }
+            else if (message.sender === "server") {
+                returnChatBox("server", message);
+                scrollToBot();
+            }
+            else {
+                returnChatBox("other", message);
+                scrollToBot();
+            }
+        }
     };
     this.ws.onclose = function() {
         setTimeout(setupWebsocket(), 1000);
@@ -101,12 +119,24 @@ function setupWebsocket() {
 }
 
 function sendMessage(message, receiver) {
+    let value = document.getElementById("sendMsgForm:inputMessage").value;
+    document.getElementById("sendMsgForm:inputMessage").value = "";
     if(message === undefined)
-        sendMessage(document.getElementById("sendMsgForm:inputMessage").value);
+        sendMessage(value);
     else if(receiver === undefined)
         this.ws.send(encode(new Message(username, username, message)));
     else
         this.ws.send(encode(new Message(receiver, username, message)));
+}
+
+function sendGuess() {
+    let value = document.getElementById("sendGuessForm:guessMessage").value;
+    document.getElementById("sendGuessForm:guessMessage").value = "";
+    sendMessage(value, "server");
+}
+
+function scrollToBot() {
+    document.getElementById("chatList").scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
 }
 
 if (window.WebSocket) {
