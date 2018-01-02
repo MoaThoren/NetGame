@@ -1,4 +1,4 @@
-package model;
+package integration;
 
 import java.io.*;
 import java.net.URL;
@@ -9,13 +9,13 @@ import java.net.URLConnection;
 //
 
 public class WordHandler {
-    private String file = "SwedishWords";
+    private String file = "wordfiles\\EnglishNounsEasy";
     private int wordArrSize = 25;
     private String[] quickWordArr = new String[wordArrSize];
 
     public WordHandler(){
-        try{                                //ON NEW OBJECT
-            downloadSwedishWords();
+        try{
+            //downloadSwedishWords();
         } catch (Exception e){
             System.out.println(e);
         }
@@ -25,7 +25,7 @@ public class WordHandler {
     private int listLength(){
         int i = 0;
         try{
-            FileReader fileReader = new FileReader(new File(file + ".txt"));
+            FileReader fileReader = new FileReader(new File( file + ".txt"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             while ((bufferedReader.readLine()) != null) {;
                 i++;
@@ -36,6 +36,8 @@ public class WordHandler {
         return i;
     }
 
+
+    /*
     private void downloadSwedishWords() throws Exception {
         try{
             String ts = "";
@@ -61,6 +63,7 @@ public class WordHandler {
             System.out.println("Could not download words.");
         }
     }
+    */
 
     private void fillQuickArr() throws IOException {
         int i = 0;
