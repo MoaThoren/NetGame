@@ -20,6 +20,7 @@ public class MessageHandler {
 
     @OnOpen
     public void onOpen(Session peer) {
+        //controller.increaseNoP();
         if(peers.isEmpty()) {
             peer.getUserProperties().put("isFirst", true);
         } else
@@ -42,9 +43,18 @@ public class MessageHandler {
         try {
             Message extractedMsg = MessageEncoder.decode(msg);
             if(extractedMsg.getReceiver().equals("server")) {
-                if(extractedMsg.getMessage().equals("name"))
+                if(extractedMsg.getMessage().equals("name")) {
                     peer.getUserProperties().put("username", extractedMsg.getSender());
-                else
+                    for (Session session : peers) {
+                        if (session.isOpen()) {
+                            try {
+                                session.getBasicRemote().sendText(MessageEncoder.encode(extractedMsg.getSender() + " joined the room! "/* + controller.getNumberOfPlayers() + " people are currently here." */));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } else
                     guessWord(extractedMsg.getMessage(), peer);
             } else {
                 for (Session session : peers) {
@@ -61,6 +71,16 @@ public class MessageHandler {
     @OnClose
     public void close(Session peer, CloseReason reason) {
         peers.remove(peer);
+        /*controller.decreaseNoP();
+        for (Session session : peers) {
+            if (session.isOpen()) {
+                try {
+                    session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " leaved the room! " + controller.getNumberOfPlayers() + " people are currently here." ));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }*/
     }
 
     @OnError
