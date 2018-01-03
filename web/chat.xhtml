@@ -7,9 +7,16 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <h:head>
-        <h:outputStylesheet name="css/style.css" />
+        <title>Guess the word!</title>
+        <h:outputStylesheet name="css/chatStyle.css" />
     </h:head>
     <h:body>
+        <h:form id="sendGuessForm">
+            <h:inputText class="guessarea" id="guessMessage" type="text" a:placeholder="Got a guess?" />
+            <h:commandButton type="submit" value="" id="guessButton" update="sendMsgForm" styleClass="sendButton">
+                <f:ajax execute="@form" render="stub" onevent="sendGuess()"/>
+            </h:commandButton>
+        </h:form>
         <h:form id="sendMsgForm">
             <ol id="chatList" class="chat"/>
             <h:inputText id="inputMessage" styleClass="chatarea" a:placeholder="Chat here"/>
