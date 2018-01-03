@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Guess the Word!</title>
+        <h:outputStylesheet name="css/startStyle.css" />
+    </h:head>
+    <h:body>
+        <div class="box">
+            <ol class="chat">
+                <li class="server">
+                    <div class="msg">
+                        <h1>Welcome to Guess The Word!</h1>
+                    </div>
+                </li>
+            </ol>
+            <div id="join">
+                <p class="title">Join the game:</p>
+            </div>
+            <h:form id="usernameForm">
+                <div class="inputarea">
+                    <h:inputText id="usernameInput" name="username" styleClass="chatarea" a:placeholder="Enter your username" />
+                    <h:commandButton type="submit" value="" id="sendButton" update="usernameForm" styleClass="sendButton">
+                        <f:ajax execute="@form" render="stub" onevent="login()"/>
+                    </h:commandButton>
+                </div>
+            </h:form>
+        </div>
+        <div id="stub" style="visibility: hidden;"/>
+        <h:outputScript name="js/startScript.js" />
+    </h:body>
+</html>

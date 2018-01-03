@@ -1,4 +1,11 @@
 const username = checkCookie("username");
+window.addEventListener("beforeunload", function (e) {
+    let confirmationMessage = "\o/";
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage;                            //Webkit, Safari, Chrome
+});
+let currentWord = "";
+let gameMaster = false;
 
 function Message(receiver, sender, message) {
     this.sender = sender;
@@ -54,11 +61,18 @@ function checkCookie(name) {
     }
 }
 
-function returnChatBox(type, message) {
+function returnChatBox(type, message, color) {
+    let colorStyle = "";
+    if(typeof color !== 'undefined') {
+        if(color === '#f76262')
+            colorStyle = "style=\"background:" + color + "; color:white;\"";
+        else
+            colorStyle = "style=\"background:" + color + "; color:#777\"";
+    }
     if(type !== "server")
         return document.getElementById("chatList").insertAdjacentHTML( 'beforeend',
             '<li class="' + type + '">' +
-                '<div class="msg">' +
+                '<div class="msg" ' + colorStyle + '>' +
                     '<p>' +
                         '<p>' + message.sender + '</p>' +
                         message.text +
@@ -68,7 +82,7 @@ function returnChatBox(type, message) {
     else
         return document.getElementById("chatList").insertAdjacentHTML( 'beforeend',
             '<li class="' + type + '">' +
-                '<div class="msg">' +
+                '<div class="msg" ' + colorStyle + '>' +
                     '<p>' +
                         message.text +
                     '</p>' +
@@ -78,8 +92,8 @@ function returnChatBox(type, message) {
 
 function noGuessBox(word) {
     let div = document.createElement('div');
-    div.innerHTML = '<div class="wordarea"><p>' + word + '</p></div>';
-    let guessArea = document.getElementById("sendGuessForm");
+    div.innerHTML = '<div id="wordArea" class="wordarea"><p>' + word + '</p></div>';
+    let guessArea = document.getElementById("sendGuessForm") !== null ? document.getElementById("sendGuessForm") : document.getElementById("wordArea");
     guessArea.replaceWith(div.firstChild);
 }
 
@@ -88,30 +102,38 @@ function setupWebsocket() {
     //this.ws = new WebSocket("ws://192.168.10.218:8080/NetGame/message");
     this.ws.onopen = function () {
         sendMessage("name", "server");
-        console.log("Connection open");
     };
     this.ws.onmessage = function(event) {
         let message = decode(event.data);
-        if (message.text.indexOf("The word you should explain is:") !== -1)
-            noGuessBox(message.text.split(': ')[1]);
-        else {
-            if (message.sender === username) {
-                returnChatBox("self", message);
-                scrollToBot();
-            }
-            else if (message.sender === "server") {
+        if (message.sender === username || message.sender === "Game master: " + username) {
+            returnChatBox("self", message);
+            scrollToBot();
+        }
+        else if (message.sender === "server") {
+            if (message.text.indexOf("The word you should explain is:") !== -1) {
+                if(message.receiver === "all") {
+                    gameMaster = true;
+                    noGuessBox(message.text.split(': ')[1]);
+                } else if (message.receiver === "gameMaster" && gameMaster === true) {
+                    noGuessBox(message.text.split(': ')[1]);
+                }
+                currentWord = message.text.split(': ')[1];
+            } else if(message.text.indexOf("right answer") !== -1) {
+                returnChatBox("server", message, '#57ff44');
+            } else if(message.text.indexOf("wrong answer") !== -1) {
+                returnChatBox("server", message, '#f76262');
+            } else
                 returnChatBox("server", message);
-                scrollToBot();
-            }
-            else {
-                returnChatBox("other", message);
-                scrollToBot();
-            }
+            scrollToBot();
+        } else if(message.sender.indexOf("master") !== -1) {
+            returnChatBox("other", message, '#7fe2e8')
+        } else {
+            returnChatBox("other", message);
+            scrollToBot();
         }
     };
     this.ws.onclose = function() {
         setTimeout(setupWebsocket(), 1000);
-        console.log("Connection was closed");
     };
     this.ws.onerror = function() {
         console.log("Error!");
@@ -120,18 +142,22 @@ function setupWebsocket() {
 
 function sendMessage(message, receiver) {
     let value = document.getElementById("sendMsgForm:inputMessage").value;
+    if(gameMaster)
+        value = value.replace(currentWord, "*");
     document.getElementById("sendMsgForm:inputMessage").value = "";
-    console.log(message);
     if(message === undefined)
         sendMessage(value);
-    else if(receiver === undefined)
-        this.ws.send(encode(new Message(username, username, message)));
-    else
+    else if(receiver === undefined) {
+        if(gameMaster)
+            this.ws.send(encode(new Message("all", "Game master: " + username, message)));
+        else
+            this.ws.send(encode(new Message("all", username, message)));
+    } else
         this.ws.send(encode(new Message(receiver, username, message)));
 }
 
 function sendGuess() {
-    let value = document.getElementById("sendGuessForm:guessMessage").value;
+    let value = document.getElementById("sendGuessForm:guessMessage").value.toLowerCase();
     document.getElementById("sendGuessForm:guessMessage").value = "";
     sendMessage(value, "server");
 }

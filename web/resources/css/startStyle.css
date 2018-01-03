@@ -17,6 +17,27 @@ a {
     color: rgba(82, 179, 217, 0.9);
 }
 
+h1{
+    color: #777;
+}
+
+.title {
+    color: #777;
+    font-size: 200%;
+    font-family: "Lato", sans-serif;
+}
+
+#join {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#highscore {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 80px;
+}
+
 .bigbox {
     list-style: none;
     background: none;
@@ -30,7 +51,7 @@ a {
     list-style: none;
     background: none;
     padding: 0 0 50px 0;
-    margin: 60px 0 10px;
+    margin: 5px 0 10px;
 }
 .chat li {
     padding: 0.5rem;
@@ -45,44 +66,32 @@ a {
     border-radius: 20px;
     box-shadow: -1px 2px 0 #d4d4d4;
     background: lightgrey;
-    margin: -5px;
-}
 
-.other .msg {
-    order: 1;
-    border-top-left-radius: 0;
-    box-shadow: -1px 2px 0 #d4d4d4;
-}
-
-.self {
-    justify-content: flex-end;
-    align-items: flex-end;
-}
-.self .msg {
-    order: 1;
-    border-bottom-right-radius: 0;
-    box-shadow: 1px 2px 0 #d4d4d4;
-    background: #7fffd4;
-}
-
-.msg {
-    background: white;
-    min-width: 50px;
-    padding: 10px;
-    border-radius: 2px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
-}
-.msg p {
-    font-size: 0.8rem;
-    margin: 0 0 0.2rem 0;
-    color: #777;
 }
 
 /* FIXED AREAS */
 
+#scoretable{
+    text-align: center;
+    margin-top: 30px;
+}
+
+#scoretable1{
+    color: #666;
+    width: 40%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.inputarea {
+    position: relative;
+}
+
 input.chatarea {
-    position: fixed;
-    bottom: 0;
+    position: relative;
+    margin-top: 5px;
+    top: 50%;
     left: 34%;
     width: 30%;
     max-width: inherit;
@@ -99,14 +108,14 @@ input.chatarea {
 }
 
 .sendButton {
-    position: fixed;
-    bottom: 5px;
-    right: 34.5%;
+    position: absolute;
+    right: 35%;
+    top: 19.5%;
     width: 40px;
     max-width: inherit;
     height: 40px;
     z-index: 99;
-    background: #42f474
+    background: #777
     url("https://github.com/google/material-design-icons/blob/master/content/1x_web/ic_send_white_36dp.png?raw=true")
     no-repeat 60% 50%;
     background-size: 60%;
@@ -120,7 +129,7 @@ input.chatarea {
     cursor: pointer;
 }
 
-input.guessarea, .wordarea {
+.wordarea {
     position: fixed;
     top: 0;
     left: 40%;
@@ -135,9 +144,6 @@ input.guessarea, .wordarea {
     color: #666;
     font-weight: 400;
     box-shadow: 1px 2px 0 #d4d4d4;
-}
-
-.wordarea {
     text-align: center;
 }
 
@@ -149,12 +155,13 @@ input.guessarea, .wordarea {
     }
 
     input.chatarea {
-        width: 100%;
-        left: 0;
+        left: 34%;
+        right: 34%;
     }
 
-    .sendButton {
-        right: 1%;
+    input.guessarea {
+        width: 100%;
+        left: 0;
     }
 
     .wordarea {

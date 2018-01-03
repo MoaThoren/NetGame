@@ -2,22 +2,25 @@ package net;
 
 import controller.Controller;
 
+import javax.ejb.EJB;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 @ServerEndpoint(value = "/message")
 public class MessageHandler {
+    @EJB
+    private Controller controller = new Controller();
     private static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
-    private Controller controller;
+    private String[] variation = {" guessed ", " thoughtfully proposed ", " suggested that the word might be ", " believed the word to be ", " speculates the word to be "};
 
     @OnOpen
     public void onOpen(Session peer) {
         if(peers.isEmpty()) {
-            controller  = new Controller();
             peer.getUserProperties().put("isFirst", true);
         } else
             peer.getUserProperties().put("isFirst", false);
@@ -41,10 +44,8 @@ public class MessageHandler {
             if(extractedMsg.getReceiver().equals("server")) {
                 if(extractedMsg.getMessage().equals("name"))
                     peer.getUserProperties().put("username", extractedMsg.getSender());
-                else {
-                    peer.getBasicRemote().sendText(MessageEncoder.encode("MeepMoop you guessed something " + extractedMsg.getMessage()));
+                else
                     guessWord(extractedMsg.getMessage(), peer);
-                }
             } else {
                 for (Session session : peers) {
                     if (session.isOpen()) {
@@ -68,14 +69,21 @@ public class MessageHandler {
     }
 
     private void guessWord(String guess, Session peer) {
-        String right = "wrong";
-        if(controller.guessWord(guess))
-            right = "right";
+        boolean right = false;
+        if(controller.guessWord(guess)) {
+            right = true;
+        }
+        int randomNum = ThreadLocalRandom.current().nextInt(0, variation.length + 1);
         for (Session session : peers) {
             if (session.isOpen()) {
                 try {
-                    session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + " guessed: " + guess
-                                                                                                                + ". It was the " + right + " answer."));
+                    if(right)
+                        session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + variation[randomNum] + guess
+                                                        + " and it was the right answer! The current score is " + controller.getScore() + " points."));
+                    else
+                        session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + variation[randomNum] + guess
+                                                        + ". Sadly it was the wrong answer :("));
+                    session.getBasicRemote().sendText(MessageEncoder.encode(new Message("gameMaster", "server", "The word you should explain is: " + controller.getWord())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

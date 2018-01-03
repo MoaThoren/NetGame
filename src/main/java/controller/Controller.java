@@ -2,6 +2,9 @@ package controller;
 
 import model.Game;
 
+import javax.ejb.Singleton;
+
+@Singleton
 public class Controller {
     private Game game = new Game();
 
