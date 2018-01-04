@@ -9,7 +9,7 @@ import java.net.URLConnection;
 //
 
 public class WordHandler {
-    private String file = "C:\\Users\\ofalk\\Desktop\\EnglishNounsEasy";
+    private String file = "C:\\Users\\Oscar\\Desktop\\EnglishNounsEasy";
     private int wordArrSize = 25;
     private String[] quickWordArr = new String[wordArrSize];
 
