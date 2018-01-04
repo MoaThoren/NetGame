@@ -11,15 +11,13 @@ import java.io.Serializable;
                 query = "DELETE FROM users user " +
                         "WHERE user.username LIKE :username " +
                         "AND user.password LIKE :password"
-        )
-        ,
+        ),
         @NamedQuery(
                 name = "checkUser",
                 query = "SELECT user FROM users user " +
                         "WHERE user.username LIKE :username",
                 lockMode = LockModeType.OPTIMISTIC
-        )
-        ,
+        ),
         @NamedQuery(
                 name = "loginUser",
                 query = "SELECT user FROM users user " +

@@ -27,6 +27,16 @@ public class GuessDAO {
         return (List<WordDTO>) wordList;
     }
 
+    public WordDTO getWord(String difficulty) throws ServerException {
+        TypedQuery getWords = entityManager.createNamedQuery("fetchWord", Word.class);
+        getWords.setParameter("difficulty", difficulty);
+        getWords.setMaxResults(1);
+        WordDTO word = (WordDTO) getWords.getSingleResult();
+        if(word == null)
+            throw new ServerException("Error fetching words!");
+        return word;
+    }
+
     public void createUser(User user) throws ServerException {
         try {
             entityManager.persist(user);

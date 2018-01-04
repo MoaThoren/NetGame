@@ -9,6 +9,14 @@ import java.io.Serializable;
         @NamedQuery(
                 name = "fetchWords",
                 query = "SELECT words FROM words words WHERE words.difficulty LIKE :difficulty"
+        ),
+        @NamedQuery(
+                name = "fetchWord",
+                query = "SELECT words FROM words words WHERE words.difficulty LIKE :difficulty"
+        ),
+        @NamedQuery(
+                name = "length",
+                query = "SELECT COUNT(word) AS cnt FROM words"
         )
 })
 

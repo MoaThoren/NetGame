@@ -1,26 +1,21 @@
 package controller;
 
-import model.Game;
+import integration.GuessDAO;
+import model.ServerException;
 
-import javax.ejb.Singleton;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.io.Serializable;
 
-@Singleton
-public class Controller {
-    private Game game = new Game();
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@Stateless
+public class Controller implements Serializable {
+    @EJB
+    private GuessDAO guessDB = new GuessDAO();
 
-    public Game game(){
-        return game;
-    }
-
-    public boolean guessWord(String guess){
-        return game.guessWord(guess);
-    }
-
-    public int getScore(){
-        return game.getScore();
-    }
-
-    public String getWord(){
-        return game.getWord();
+    public String getWord(String difficulty) throws ServerException {
+        return guessDB.getWord(difficulty).getWord();
     }
 }

@@ -159,11 +159,11 @@ function setupWebsocket() {
 
     this.ws.onclose = function() {  setTimeout(setupWebsocket(), 1000); };
 
-    this.ws.onerror = function() {  console.log('Error!');  }
+    this.ws.onerror = function(event) {  console.log('Error! ' + event.description);  }
 }
 
 if (window.WebSocket)
-    document.onload = setupWebsocket();
+    document.onload(setupWebsocket());
 else
     returnChatBox('server',
         new Message('all', 'server', 'YOUR BROWSER DOESN\'T SUPPORT WEBSOCKET, THUS THIS APPLICATION CANNOT CONNECT.'));

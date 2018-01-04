@@ -1,6 +1,7 @@
 package net;
 
 import controller.Controller;
+import model.ServerException;
 
 import javax.ejb.EJB;
 import javax.websocket.*;
@@ -17,6 +18,16 @@ public class MessageHandler {
     private Controller controller = new Controller();
     private static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
     private String[] variation = {" guessed ", " thoughtfully proposed ", " suggested that the word might be ", " believed the word to be ", " speculates the word to be "};
+    private String difficulty = "easy";
+    private String currentWord = "";
+
+    public MessageHandler() {
+        try {
+            currentWord = controller.getWord(difficulty);
+        } catch (ServerException e) {
+            e.printStackTrace();
+        }
+    }
 
     @OnOpen
     public void onOpen(Session peer) {
@@ -31,7 +42,7 @@ public class MessageHandler {
                 peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are a minion"));
             else {
                 peer.getBasicRemote().sendText(MessageEncoder.encode("Welcome to the chat!\nYou are the game master"));
-                peer.getBasicRemote().sendText(MessageEncoder.encode("The word you should explain is: " + controller.getWord()));
+                peer.getBasicRemote().sendText(MessageEncoder.encode("The word you should explain is: " + currentWord));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,6 +76,8 @@ public class MessageHandler {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ServerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,9 +101,9 @@ public class MessageHandler {
         error.printStackTrace();
     }
 
-    private void guessWord(String guess, Session peer) {
+    private void guessWord(String guess, Session peer) throws ServerException {
         boolean right = false;
-        if(controller.guessWord(guess)) {
+        if(guessWord(guess)) {
             right = true;
         }
         int randomNum = ThreadLocalRandom.current().nextInt(0, variation.length + 1);
@@ -99,15 +112,19 @@ public class MessageHandler {
                 try {
                     if(right)
                         session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + variation[randomNum] + guess
-                                                        + " and it was the right answer! The current score is " + controller.getScore() + " points."));
+                                                        + " and it was the right answer! The current score is " /*+ controller.getScore() + " points."*/));
                     else
                         session.getBasicRemote().sendText(MessageEncoder.encode(peer.getUserProperties().get("username") + variation[randomNum] + guess
                                                         + ". Sadly it was the wrong answer :("));
-                    session.getBasicRemote().sendText(MessageEncoder.encode(new Message("gameMaster", "server", "The word you should explain is: " + controller.getWord())));
+                    session.getBasicRemote().sendText(MessageEncoder.encode(new Message("gameMaster", "server", "The word you should explain is: " + controller.getWord(difficulty))));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private boolean guessWord(String guess) {
+        return guess.equals(currentWord);
     }
 }
