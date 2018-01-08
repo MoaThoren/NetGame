@@ -13,7 +13,9 @@ body {
     background: rgba(82, 179, 217, 0.3);
     color: inherit;
 }
+
 a {
+    font-size: larger;
     color: rgba(82, 179, 217, 0.9);
 }
 
@@ -138,6 +140,10 @@ input.guessarea, .wordarea {
 
 .wordarea {
     text-align: center;
+}
+
+.wordarea p {
+    margin: 0;
 }
 
 /* RESPONSIVE */
