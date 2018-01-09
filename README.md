@@ -1,2 +1,2 @@
-# A group chat.
-![Example Chat](https://i.imgur.com/GEfQGQn.png)
+# A sample session.
+![Example session](https://i.imgur.com/bhYqy9U.png)
